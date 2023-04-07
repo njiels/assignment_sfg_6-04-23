@@ -90,10 +90,19 @@
     }
   }
   /* Custom CSS */
-   #MegaMenu-Content-custom .custom-item-wrapper, .MegaMenu-Extra-categories .custom-item-wrapper{
+  .mega-menu .mega-menu__list, .mega-menu .mega-menu__list--condensed{
+    display: flex;
+    flex-direction: row;
+  }
+  .mega-menu .mega-menu__list.no-flex, .mega-menu .mega-menu__list--condensed.no-flex{
+    display: block;    
+  }
+   .custom-item-wrapper, .MegaMenu-Extra-categories .custom-item-wrapper{
+     display: flex;
+     flex-direction: column;
      width: 33.33%!important;
   }
-  #MegaMenu-Content-custom .custom-image-wrapper, .MegaMenu-Extra-categories .custom-image-wrapper{
+  .custom-image-wrapper, .MegaMenu-Extra-categories .custom-image-wrapper{
     overflow: hidden;    
     content: " ";
     height: 13em;    
@@ -101,36 +110,44 @@
     display: flex;
     justify-content: center;
   }
-  #MegaMenu-Content-custom .custom-item-wrapper.more .custom-image-wrapper, .MegaMenu-Extra-categories .custom-item-wrapper.more .custom-image-wrapper{
+  .custom-image-wrapper, .MegaMenu-Extra-categories .custom-image-wrapper.stand-in{
+    background: #e3e3e3;
+  }
+  .custom-item-wrapper.more .custom-image-wrapper, .MegaMenu-Extra-categories .custom-item-wrapper.more .custom-image-wrapper{
     max-height: 13em;
     background: #000;
     display: flex;
     justify-content: center;
     align-items: center;
   }
-  #MegaMenu-Content-custom .custom-item-wrapper.more a, .MegaMenu-Extra-categories .custom-item-wrapper.more a{
+  .custom-item-wrapper.more a, .MegaMenu-Extra-categories .custom-item-wrapper.more a{
     color: #fff;
     border: solid #fff;
     border-width: 0 0 1px 0;
     text-decoration: none;  
     text-align: center;
   }
-  #MegaMenu-Content-custom .custom-image-wrapper img, .MegaMenu-Extra-categories .custom-image-wrapper img{
+  .custom-image-wrapper img, .MegaMenu-Extra-categories .custom-image-wrapper img{
     min-width: 100%;
     object-fit: cover;
   }
-  #MegaMenu-Content-custom .custom-item-wrapper:hover .custom-image-wrapper, .MegaMenu-Extra-categories .custom-item-wrapper:hover .custom-image-wrapper{
+  .custom-item-wrapper:hover .custom-image-wrapper, .MegaMenu-Extra-categories .custom-item-wrapper:hover .custom-image-wrapper{
     transition: opacity .25s;
     opacity: .5;
   }
-  #MegaMenu-Content-custom .custom-item-wrapper .link-title, .MegaMenu-Extra-categories .custom-item-wrapper .link-title{
+  .custom-item-wrapper .link-title, .MegaMenu-Extra-categories .custom-item-wrapper .link-title{
+    width: fit-content;
     text-decoration: none;
     color: #000;
   }
-  #MegaMenu-Content-custom .custom-item-wrapper:hover .link-title, .MegaMenu-Extra-categories .custom-item-wrapper:hover .link-title{
+  .custom-item-wrapper:hover .link-title, .MegaMenu-Extra-categories .custom-item-wrapper:hover .link-title{
+    width: fit-content;
     transition: all .25s ease-in;
     border: solid #000;
     border-width: 0 0 1px 0;
+  }
+  .custom-item-wrapper:hover .custom-image-wrapper, .MegaMenu-Extra-categories .custom-item-wrapper .deco:hover{
+    opacity: 1;
   }
 </style>
 
@@ -207,7 +224,7 @@
           </summary>
           <div id="menu-drawer" class="gradient menu-drawer motion-reduce" tabindex="-1">
             <div class="menu-drawer__inner-container">
-              <div class="menu-drawer__navigation-container">
+              <div class="menu-drawer__navigation-container">      
                 <nav class="menu-drawer__navigation">
                   <ul class="menu-drawer__menu has-submenu list-menu" role="list">
                   {% if section.settings.custom-nav-check %}
@@ -223,24 +240,7 @@
                                 <button class="menu-drawer__close-button link link--text focus-inset" aria-expanded="true">
                                   {% render 'icon-arrow' %}
                                   {{ section.settings.custom-menu-name | escape }}
-                                </button>
-                                <ul class="menu-drawer__menu list-menu" role="list" tabindex="-1">
-                                  {% for block in section.blocks %}
-                                    {% if block.type == "product" %}
-                                      <li>                                      
-                                          <a href="{{ block.settings.product.url }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset{% if childlink.current %} menu-drawer__menu-item--active{% endif %}"{% if childlink.current %} aria-current="page"{% endif %}>
-                                            {{ block.settings.product }}
-                                          </a>
-                                      </li>
-                                    {% else if block.type == "page" %}
-                                      <li>                                      
-                                          <a href="{{ block.settings.page.url }}" class="menu-drawer__menu-item link link--text list-menu__item focus-inset{% if childlink.current %} menu-drawer__menu-item--active{% endif %}"{% if childlink.current %} aria-current="page"{% endif %}>
-                                            {{ block.settings.page }}
-                                          </a>
-                                      </li>
-                                    {% endif %}
-                                  {% endfor %}
-                                </ul>
+                                </button>                                
                               </div>
                             </div>
                           </details>
@@ -639,50 +639,52 @@
                         {% render 'icon-caret' %}
                       </summary>
                       <div id="MegaMenu-Content-{{ forloop.index }}" class="mega-menu__content gradient motion-reduce global-settings-popup" tabindex="-1">
-                        {% if link.title != 'Categories'  %}
+                        {% if link.title != 'Shop' %}
                         <ul class="mega-menu__list page-width{% if link.levels == 1 %} mega-menu__list--condensed{% endif %}" role="list">
                           {%- for childlink in link.links -%}
-                            <li>
-                              <a href="{{ childlink.url }}" class="mega-menu__link mega-menu__link--level-2 link{% if childlink.current %} mega-menu__link--active{% endif %}"{% if childlink.current %} aria-current="page"{% endif %}>
-                                {{ childlink.title | escape }}
-                              </a>
-                              {%- if childlink.links != blank -%}
-                                <ul class="list-unstyled" role="list">
-                                  {%- for grandchildlink in childlink.links -%}
-                                    <li>
-                                      <a href="{{ grandchildlink.url }}" class="mega-menu__link link{% if grandchildlink.current %} mega-menu__link--active{% endif %}"{% if grandchildlink.current %} aria-current="page"{% endif %}>
-                                        {{ grandchildlink.title | escape }}
-                                      </a>
-                                    </li>
-                                  {%- endfor -%}
-                                </ul>
-                              {%- endif -%}
-                            </li>
+                            {% if childlink.title == ":img" %}
+                              <li class="custom-item-wrapper">
+                                <div class="custom-image-wrapper deco"> 
+                                  <img src="{{ childlink.object | image_url }}">                                                                      
+                                </div>
+                              </li>
+                            {% else if childlink.title != "shop" %}                              
+                              <li class="custom-item-wrapper">
+                                {% if childlink.object.image %}
+                                  <a href={{ childlink.url }} class="custom-image-wrapper">
+                                    <img src="{{ childlink.object | image_url }}">
+                                  </a>
+                                {% else %}
+                                  <a href={{ childlink.url }} class="custom-image-wrapper stand-in">
+                                  </a>
+                                {% endif %}
+                                <a href="{{ childlink.url }}" class="link-title">{{ childlink.title }}</a>
+                              </li>                                                              
+                            {% endif %}                                                            
                           {%- endfor -%}
                         </ul>
-                          {% endif %}
-                        <div class="MegaMenu-Extra-{{ forloop.index }} MegaMenu-Extra-categories mega-menu__list page-width mega-menu__list--condensed">                                                    
-                          {% if link.title == 'Categories'  %}
-                            <ul class="mega-menu__list page-width">
-                            {%- for collection in collections -%}
-                              {% if collection.title == "Home page" %}
-                              {% else %}
-                                <li class="custom-item-wrapper">
-                                  <a href={{ collection.url }} class="custom-image-wrapper">
-                                    <img src="{{ collection | image_url }}">
-                                  </a>
-                                  <a href="{{ collection.url }}" class="link-title">{{ collection.title }}</a>
-                                </li>
-                              {% endif %}
+                        {% else %}
+                          <ul class="mega-menu__list page-width{% if link.levels == 1 %} mega-menu__list--condensed{% endif %} no-flex" role="list">
+                            {%- for childlink in link.links -%}
+                              <li>
+                                <a href="{{ childlink.url }}" class="mega-menu__link mega-menu__link--level-2 link{% if childlink.current %} mega-menu__link--active{% endif %}"{% if childlink.current %} aria-current="page"{% endif %}>
+                                  {{ childlink.title | escape }}
+                                </a>
+                                {%- if childlink.links != blank -%}
+                                  <ul class="list-unstyled" role="list">
+                                    {%- for grandchildlink in childlink.links -%}
+                                      <li>
+                                        <a href="{{ grandchildlink.url }}" class="mega-menu__link link{% if grandchildlink.current %} mega-menu__link--active{% endif %}"{% if grandchildlink.current %} aria-current="page"{% endif %}>
+                                          {{ grandchildlink.title | escape }}
+                                        </a>
+                                      </li>
+                                    {%- endfor -%}
+                                  </ul>
+                                {%- endif -%}
+                              </li>
                             {% endfor %}
-                            <li class="custom-item-wrapper more">
-                              <a href="/collections" class="custom-image-wrapper collections-wrapper">
-                                <p>See all collections</p>
-                              </a>                              
-                            </li>
-                            </ul>
-                          {% endif %}
-                        </div>
+                          </ul>
+                        {% endif %}
                       </div>
                     </details>
                   </header-menu>
@@ -1064,18 +1066,7 @@
       "default": "middle-left",
       "label": "t:sections.header.settings.logo_position.label",
       "info": "t:sections.header.settings.logo_help.content"
-    },
-    {
-      "type": "checkbox",
-      "id": "custom-nav-check",
-      "label": "Show Custom Navigation"
-    },
-    {
-      "type": "text",
-      "id": "custom-menu-name",
-      "default": "Arrivals",
-      "label": "Select a name"
-    },
+    },    
     {
       "type": "link_list",
       "id": "menu",
@@ -1242,39 +1233,7 @@
       "default": 20
     }
   ],
-  "blocks": [
-    {
-      "type": "page",
-      "name": "Link to page",
-      "settings": [
-        {
-          "type": "image_picker",
-          "label": "select image",
-          "id": "image"
-        },
-        {
-          "type": "page",
-          "id": "page",
-          "label": "Link to"
-        }
-      ]
-    },
-    {
-      "type": "product",
-      "name": "Link to product",
-      "settings": [
-        {
-          "type": "image_picker",
-          "label": "select image",
-          "id": "image"
-        },
-        {
-          "type": "product",
-          "id": "product",
-          "label": "Link to"
-        }
-      ]
-    },
+  "blocks": [    
     {
       "type": "@app"
     }
