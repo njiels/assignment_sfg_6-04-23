@@ -94,8 +94,12 @@
     display: flex;
     flex-direction: row;
   }
-  .mega-menu .mega-menu__list.no-flex, .mega-menu .mega-menu__list--condensed.no-flex{
-    display: block;    
+  .image-container{
+    display: flex;
+    flex-direction: row;
+  }
+  .image-container .custom-item-wrapper{
+    padding-right: 1em;
   }
    .custom-item-wrapper, .MegaMenu-Extra-categories .custom-item-wrapper{
      display: flex;
@@ -639,52 +643,60 @@
                         {% render 'icon-caret' %}
                       </summary>
                       <div id="MegaMenu-Content-{{ forloop.index }}" class="mega-menu__content gradient motion-reduce global-settings-popup" tabindex="-1">
-                        {% if link.title != 'Shop' %}
+                        
                         <ul class="mega-menu__list page-width{% if link.levels == 1 %} mega-menu__list--condensed{% endif %}" role="list">
+                          
                           {%- for childlink in link.links -%}
                             {% if childlink.title == ":img" %}
                               <li class="custom-item-wrapper">
                                 <div class="custom-image-wrapper deco"> 
                                   <img src="{{ childlink.object | image_url }}">                                                                      
                                 </div>
-                              </li>
-                            {% else if childlink.title != "shop" %}                              
-                              <li class="custom-item-wrapper">
-                                {% if childlink.object.image %}
-                                  <a href={{ childlink.url }} class="custom-image-wrapper">
-                                    <img src="{{ childlink.object | image_url }}">
-                                  </a>
-                                {% else %}
-                                  <a href={{ childlink.url }} class="custom-image-wrapper stand-in">
-                                  </a>
-                                {% endif %}
-                                <a href="{{ childlink.url }}" class="link-title">{{ childlink.title }}</a>
-                              </li>                                                              
-                            {% endif %}                                                            
-                          {%- endfor -%}
-                        </ul>
-                        {% else %}
-                          <ul class="mega-menu__list page-width{% if link.levels == 1 %} mega-menu__list--condensed{% endif %} no-flex" role="list">
-                            {%- for childlink in link.links -%}
-                              <li>
-                                <a href="{{ childlink.url }}" class="mega-menu__link mega-menu__link--level-2 link{% if childlink.current %} mega-menu__link--active{% endif %}"{% if childlink.current %} aria-current="page"{% endif %}>
-                                  {{ childlink.title | escape }}
-                                </a>
-                                {%- if childlink.links != blank -%}
-                                  <ul class="list-unstyled" role="list">
-                                    {%- for grandchildlink in childlink.links -%}
-                                      <li>
-                                        <a href="{{ grandchildlink.url }}" class="mega-menu__link link{% if grandchildlink.current %} mega-menu__link--active{% endif %}"{% if grandchildlink.current %} aria-current="page"{% endif %}>
-                                          {{ grandchildlink.title | escape }}
-                                        </a>
+                              </li>                              
+                            {% elsif childlink.title == ":img-link" %}
+                              <ul class="image-container">
+                                {% for childlink in childlink.links %}
+                                  {% if childlink.title == ":img" %}
+                                    <li class="custom-item-wrapper">
+                                      <div class="custom-image-wrapper deco"> 
+                                        <img src="{{ childlink.object | image_url }}">                                                                      
+                                      </div>
+                                    </li>
+                                    {% else %}
+                                      <li class="custom-item-wrapper">
+                                        {% if childlink.object.image %}
+                                          <a href={{ childlink.url }} class="custom-image-wrapper">
+                                            <img src="{{ childlink.object | image_url }}">
+                                          </a>
+                                        {% else %}
+                                          <a href={{ childlink.url }} class="custom-image-wrapper stand-in">
+                                          </a>
+                                        {% endif %}
+                                        <a href="{{ childlink.url }}" class="link-title">{{ childlink.title }}</a>
                                       </li>
-                                    {%- endfor -%}
-                                  </ul>
-                                {%- endif -%}
-                              </li>
-                            {% endfor %}
-                          </ul>
-                        {% endif %}
+                                    {% endif %}
+                                  {% endfor %}
+                                </ul>
+                              {% else %}
+                                <li>
+                                  <a href="{{ childlink.url }}" class="mega-menu__link mega-menu__link--level-2 link{% if childlink.current %} mega-menu__link--active{% endif %}"{% if childlink.current %} aria-current="page"{% endif %}>
+                                    {{ childlink.title | escape }}
+                                  </a>
+                                  {%- if childlink.links != blank -%}
+                                    <ul class="list-unstyled" role="list">
+                                      {%- for grandchildlink in childlink.links -%}
+                                        <li>
+                                          <a href="{{ grandchildlink.url }}" class="mega-menu__link link{% if grandchildlink.current %} mega-menu__link--active{% endif %}"{% if grandchildlink.current %} aria-current="page"{% endif %}>
+                                            {{ grandchildlink.title | escape }}
+                                          </a>
+                                        </li>
+                                      {%- endfor -%}
+                                    </ul>
+                                  {%- endif -%}
+                                </li>
+                              {% endif %}
+                          {%- endfor -%}
+                        </ul>                                              
                       </div>
                     </details>
                   </header-menu>
