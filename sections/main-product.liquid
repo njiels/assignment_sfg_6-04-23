@@ -2,7 +2,7 @@
   id="MainProduct-{{ section.id }}"
   class="page-width section-{{ section.id }}-padding"
   data-section="{{ section.id }}"
->
+>  
   {{ 'section-main-product.css' | asset_url | stylesheet_tag }}
   {{ 'component-accordion.css' | asset_url | stylesheet_tag }}
   {{ 'component-price.css' | asset_url | stylesheet_tag }}
@@ -17,12 +17,38 @@
       padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
     }
 
+    .product_variants_scroll_container{
+      position: relative;
+    }
+    .product_variants_scroll{
+      cursor: grab;
+      display: flex;
+      flex-direction: row;
+      overflow-y: hidden;
+      overflow-x: scroll;
+      position: relative;
+      scrollbar-color: #000;
+    }
+    .product_variants_scroll::-webkit-scrollbar {
+      background-color: #e3e3e3;
+      height: 5px;
+      z-index: 100;
+    }
+    .product_variants_scroll::-webkit-scrollbar-thumb {
+      background-color: #000;
+    }    
+    .product_variant_a{
+      margin-right: 10px;
+    }
+    .product_variant_a img{
+/*       width: 100%; */
+    }
     @media screen and (min-width: 750px) {
       .section-{{ section.id }}-padding {
         padding-top: {{ section.settings.padding_top }}px;
         padding-bottom: {{ section.settings.padding_bottom }}px;
       }
-    }
+    }  
   {%- endstyle -%}
 
   <script src="{{ 'product-info.js' | asset_url }}" defer="defer"></script>
@@ -66,6 +92,7 @@
         data-url="{{ product.url }}"
         class="product__info-container{% if section.settings.enable_sticky_info %} product__column-sticky{% endif %}"
       >
+        
         {%- assign product_form_id = 'product-form-' | append: section.id -%}
 
         {%- for block in section.blocks -%}
@@ -97,9 +124,9 @@
                   price_class: 'price--large'
                 -%}
               </div>
-              {%- if cart.taxes_included or shop.shipping_policy.body != blank -%}
+              {%- if shop.taxes_included or shop.shipping_policy.body != blank -%}
                 <div class="product__tax caption rte">
-                  {%- if cart.taxes_included -%}
+                  {%- if shop.taxes_included -%}
                     {{ 'products.product.include_taxes' | t }}
                   {%- endif -%}
                   {%- if shop.shipping_policy.body != blank -%}
@@ -120,7 +147,7 @@
                 {{ block.shopify_attributes }}
                 id="Inventory-{{ section.id }}"
                 role="status"
-              >
+              >            
                 {%- if product.selected_or_first_available_variant.inventory_management == 'shopify' -%}
                   {%- if product.selected_or_first_available_variant.inventory_quantity > 0 -%}
                     {%- if product.selected_or_first_available_variant.inventory_quantity <= block.settings.inventory_threshold -%}
@@ -438,7 +465,24 @@
           {{ 'products.product.view_full_details' | t }}
           {% render 'icon-arrow' %}
         </a>
-      </product-info>
+        <div class="product_variants_container">
+          <h2>Variants</h2>
+          {%- if product.metafields.custom.alternative_color.value -%}
+            <p>Also available in...</p>
+            <div class="product_variants_scroll_container">
+              <div class="product_variants_scroll">
+              {%- for alt_product in product.metafields.custom.alternative_color.value -%}
+                {%- if alt_product.available -%}
+                <a href="{{ alt_product.url }}" title="{{ alt_product.title }}" class="product_variant_a">
+                  <img src="{{ alt_product.featured_image | img_url: '90x90', crop: 'center', format: 'pjpg' }}" alt="{{ alt_product.title }}" loading="lazy">
+                </a>
+                {%- endif -%}
+              {%- endfor -%}
+              </div>
+            </div>
+          {%- endif -%}
+        </div>
+      </product-info>        
     </div>
     {%- if section.settings.media_position == 'right' -%}
       {% comment %} Duplicate gallery to display after product content on tablet/desktop breakpoint {% endcomment %}
